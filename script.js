@@ -1,5 +1,6 @@
 const cheapest = document.querySelector('.cheapest');
 const priceList = document.querySelector('.price-list');
+const mostExpensive = document.querySelector('.most-expensive');
 
 function getTodayDate() {
     const today = new Date();
@@ -48,6 +49,16 @@ function formatHour(hour) {
     return `${String(hour).padStart(2, '0')}:00`;
 }
 
+function findMostExpensiveHour(prices) {
+    let mostExpensiveHour = prices[0];
+    for (const item of prices) {
+        if (item.price > mostExpensiveHour.price) {
+            mostExpensiveHour = item;
+        }
+    }
+    return mostExpensiveHour;
+}
+
 async function loadPrices() {
     try {
         const todayDate = getTodayDate();
@@ -60,11 +71,14 @@ async function loadPrices() {
         const values = data.included[0].attributes.values;
         const prices = toHourlyPrices(values);
         renderPrices(prices);
-        const cheapestHour = findCheapestHour(prices);
-        cheapest.textContent = `Cheapest hour: ${formatHour(cheapestHour.hour)} (${formatPrice(cheapestHour.price)})`;
+        const cheapestHourData = findCheapestHour(prices);
+        cheapest.textContent = `Cheapest hour: ${formatHour(cheapestHourData.hour)} (${formatPrice(cheapestHourData.price)})`;
+        const mostExpensiveHourData = findMostExpensiveHour(prices);
+        mostExpensive.textContent = `Most expensive hour: ${formatHour(mostExpensiveHourData.hour)} (${formatPrice(mostExpensiveHourData.price)})`;
     } catch (error) {
         console.error(error);
         cheapest.textContent = `Could not load today's prices. Please try again later.`;
+        mostExpensive.textContent = `Could not load most expensive hour. Please try again later.`;
     }
 }
 
