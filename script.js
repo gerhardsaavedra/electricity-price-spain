@@ -1,6 +1,7 @@
 const cheapest = document.querySelector('.cheapest');
 const priceList = document.querySelector('.price-list');
 const mostExpensive = document.querySelector('.most-expensive');
+const averagePrice = document.querySelector('.average-price');
 
 function getTodayDate() {
     const today = new Date();
@@ -59,6 +60,14 @@ function findMostExpensiveHour(prices) {
     return mostExpensiveHour;
 }
 
+function getAveragePrice(prices) {
+    let total = 0;
+    for (const item of prices) {
+        total += item.price;
+    }
+    return total / prices.length;
+}
+
 async function loadPrices() {
     try {
         const todayDate = getTodayDate();
@@ -75,10 +84,14 @@ async function loadPrices() {
         cheapest.textContent = `Cheapest hour: ${formatHour(cheapestHourData.hour)} (${formatPrice(cheapestHourData.price)})`;
         const mostExpensiveHourData = findMostExpensiveHour(prices);
         mostExpensive.textContent = `Most expensive hour: ${formatHour(mostExpensiveHourData.hour)} (${formatPrice(mostExpensiveHourData.price)})`;
+        const avgPrice = getAveragePrice(prices);
+        averagePrice.textContent = `Average price: ${formatPrice(avgPrice)}`;
     } catch (error) {
         console.error(error);
         cheapest.textContent = `Could not load today's prices. Please try again later.`;
-        mostExpensive.textContent = `Could not load most expensive hour. Please try again later.`;
+        priceList.textContent = ``;
+        mostExpensive.textContent = ``;
+        averagePrice.textContent = ``;
     }
 }
 
